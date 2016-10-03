@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -33,7 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private final String LOG_Main = MainActivity.class.getSimpleName();
 
@@ -51,7 +51,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-     //   initData();
         GridView gridview = (GridView) findViewById(R.id.grid_view);
         mSampleGridViewAdapter = new ImageAdapter(this);
         gridview.setAdapter(mSampleGridViewAdapter);
@@ -75,12 +74,8 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String unitType = sharedPrefs.getString(getString(R.string.pref_type_key),
                 getString(R.string.pref_units_popular));
-
-        Log.d(LOG_Main,"upDateData unitType =" + unitType);
-
         FilmsTask filmsTask = new FilmsTask();
         filmsTask.execute(unitType);
-        Log.v("FilmsTask", "Built URI " );
     }
 
     public class FilmsTask extends AsyncTask<String,Void,String[]> {
@@ -95,14 +90,10 @@ public class MainActivity extends ActionBarActivity {
 
             mSampleGridViewAdapter.notifyDataSetChanged();
 
-         //   mFilmspic = result.clone();
         }
 
         @Override
         protected String[] doInBackground(String... params) {
-//            if (voids.length == 0) {
-//                return null;
-//            }
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -136,16 +127,12 @@ public class MainActivity extends ActionBarActivity {
                      FORECAST_URL = FORECAST_RATED_URL;
                 }
 
-                Log.d(LOG_Main,"FORECAST_URL = " + FORECAST_URL);
-
-
                 Uri builtUri = Uri.parse(FORECAST_URL).buildUpon()
                         .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_Films_API_KEY)
                         .build();
 
                 URL url = new URL(builtUri.toString());
 
-                Log.v(LOG_TAG, "Built URI " + url.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -174,7 +161,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 filmJsonStr = buffer.toString();
 
-                Log.d(LOG_TAG, "" + filmJsonStr);
+                Log.d(LOG_Main, "" + filmJsonStr);
 
             } catch (Exception e) {
                 Log.e("FilmsTask", "Error ", e);
@@ -196,7 +183,7 @@ public class MainActivity extends ActionBarActivity {
                 try {
                     return getFilmsDataFromJson(filmJsonStr);
                 } catch (Exception e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
+                    Log.e(LOG_Main, e.getMessage(), e);
                     e.printStackTrace();
                 }
 
@@ -234,7 +221,7 @@ public class MainActivity extends ActionBarActivity {
 
             mFilmspic = filmspic.clone();
 
-        //    Log.d(LOG_Main,"Filmspic[0] =" + mFilmspic[0]);
+            Log.d(LOG_Main,"Filmspic[0] =" + mFilmspic[0]);
 
 
             return filmspic;
